@@ -5,7 +5,7 @@ This is a simple wrapper to use the admiralcloud search API.
 #### Installation
 
 ```shell
-composer req sioweb/admiralcloudclient
+composer req sioweb/admiralcloud-client
 ```
 
 #### Test
