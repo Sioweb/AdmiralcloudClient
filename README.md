@@ -28,7 +28,7 @@ Create a file in a subdirectory of your project: `public/index.php`. Its not nec
 ```php
 <?php
 
-use Sioweb\AcSignature\Api\Request;
+use Sioweb\AdmiralcloudClient\Api\Request;
 
 include '../vendor/autoload.php';
 
