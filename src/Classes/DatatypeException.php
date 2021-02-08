@@ -1,6 +1,6 @@
 <?php
 
-namespace Sioweb\AcSignature\Classes;
+namespace Sioweb\AdmiralcloudClient\Classes;
 
 class DatatypeException extends \Exception
 {

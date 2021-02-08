@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Sioweb\\AcSignature\\": "src/"
+            "Sioweb\\AdmiralcloudClient\\": "src/"
         }
     }
 }

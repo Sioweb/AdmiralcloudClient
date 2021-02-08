@@ -1,14 +1,14 @@
 <?php
 
-namespace Sioweb\AcSignature\Api;
+namespace Sioweb\AdmiralcloudClient\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use Sioweb\AcSignature\Classes\MissingParameterException;
-use Sioweb\AcSignature\Classes\DatatypeException;
+use Sioweb\AdmiralcloudClient\Classes\MissingParameterException;
+use Sioweb\AdmiralcloudClient\Classes\DatatypeException;
 use GuzzleHttp\Exception\GuzzleException;
 use RuntimeException;
-use Sioweb\AcSignature\Classes\Signature;
+use Sioweb\AdmiralcloudClient\Classes\Signature;
 use Symfony\Component\Dotenv\Dotenv;
 
 class Request
@@ -22,7 +22,6 @@ class Request
      * @var string
      */
     private $rootDir;
-
 
     public function __construct($rootDir = null)
     {
