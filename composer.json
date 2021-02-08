@@ -1,0 +1,22 @@
+{
+    "name": "sioweb/admiralcloud-client",
+    "type": "library",
+    "description": "",
+    "license": "propritary",
+    "authors": [
+        {
+            "name": "Sascha Weidner",
+            "homepage": "https://www.sioweb.de"
+        }
+    ],
+    "require": {
+        "php": "^7.0||^8.0",
+        "guzzlehttp/guzzle": "^7.2",
+        "symfony/dotenv": "^5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sioweb\\AcSignature\\": "src/"
+        }
+    }
+}
