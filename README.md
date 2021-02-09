@@ -1,6 +1,6 @@
 ### PHP Client for Admiralcloud
 
-This is a simple wrapper to use the admiralcloud search API.
+This is a simple example wrapper to use the admiralcloud search API.
 
 #### Installation
 
