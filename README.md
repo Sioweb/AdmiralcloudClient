@@ -25,6 +25,8 @@ AC_API_VERSION="v5"
 
 Create a file in a subdirectory of your project: `public/index.php`. Its not necessary how you name the public dir, it also could be named `web`, or what ever you prever. The index.php file just **should not** be in the same level as `vendor`.
 
+To test the requests, just remove the comments (// ) from behind a die()-block.
+
 ```php
 <?php
 
@@ -34,24 +36,42 @@ include '../vendor/autoload.php';
 
 $Request = new Request();
 
-// Get Media by mediaContainerId & mediaId
-die(json_encode($Request->media([
-    'mediaContainerId' => 1046949,
-    'mediaId' => 3173423
-])));
+// // Get Media by mediaContainerId & mediaId
+// die(json_encode($Request->media([
+//     'mediaContainerId' => 9999999,
+//     'mediaId' => 9999999
+// ])));
+
+
+// // Get Media by mediaContainerId only
+// die(json_encode($Request->media([
+//     'mediaContainerId' => 9999999
+// ])));
 
 
 // Get Mediacontainer by mediaContainerId (not id!)
-die(json_encode($Request->mediacontainer([
-    'mediaContainerId' => 1046949
-])));
+// die(json_encode($Request->mediacontainer([
+//     'mediaContainerId' => 9999999
+// ])));
 
 
-// how to search by meta fields
-die(json_encode($Request->search([
-    'searchTerm' => '99999',
-    'field' => 'meta_seippArticleNumber'
-])));
+// // Get 250 Media IDs from Mediacontainer
+// die(json_encode($Request->mediacontainerBatch()));
+
+
+// // Get 10 Media IDs from Mediacontainer
+// die(json_encode($Request->mediacontainerBatch([
+//     'limit' => 10
+// ])));
+
+
+// // how to search by meta fields
+// die(json_encode($Request->search([
+//     'searchTerm' => 'lorem ipsum',
+//     'field' => 'meta_yourOwnMetaDataField'
+// ])));
+
+
 ```
 
 #### Unable to read the "/.../.env" environment file
