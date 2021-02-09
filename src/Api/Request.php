@@ -7,6 +7,8 @@ use GuzzleHttp\Exception\ClientException;
 use Sioweb\AdmiralcloudClient\Classes\MissingParameterException;
 use Sioweb\AdmiralcloudClient\Classes\DatatypeException;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Psr7\Response;
+use InvalidArgumentException;
 use RuntimeException;
 use Sioweb\AdmiralcloudClient\Classes\Signature;
 use Symfony\Component\Dotenv\Dotenv;
@@ -48,12 +50,21 @@ class Request
         }
     }
 
-    public function setRootDir(string $rootDir)
+    /**
+     * 
+     * @param string $rootDir 
+     * @return void 
+     */
+    public function setRootDir(string $rootDir) : void
     {
         $this->rootDir = $rootDir;
     }
 
-    private function getRootDir()
+    /**
+     * 
+     * @return string 
+     */
+    private function getRootDir() : string
     {
         if($this->rootDir) {
             return $this->rootDir;
@@ -69,19 +80,92 @@ class Request
     /**
      * 
      * @param array $Payload 
-     * @param integer|null $timestamp 
+     * @param null|int $timestamp 
+     * @return array 
+     * @throws MissingParameterException 
+     * @throws DatatypeException 
+     * @throws GuzzleException 
+     */
+    private function getMediacontainer(array $Payload = [], ?int $timestamp = null) : array
+    {
+        $Params = $this->getParams(['mediacontainer', 'find'], $Payload, $timestamp);
+
+        try {
+            $Result = $this->client->get(
+                $this->getUrl('mediacontainer', ['mediaContainerId'], $Payload),
+                $this->addOptions($Params, 'query')
+            );
+        } catch(ClientException $e) {
+            die('<pre>' . __METHOD__ . ":\n" . print_r($e, true) . "\n#################################\n\n" . '</pre>');
+        }
+
+        return $this->getResultAsArray($Result);
+    }
+
+    /**
+     * 
+     * @param array $Payload 
+     * @param null|int $timestamp 
+     * @return array 
+     * @throws MissingParameterException 
+     * @throws DatatypeException 
+     * @throws GuzzleException 
+     */
+    private function getMedia(array $Payload = [], ?int $timestamp = null) : array
+    {
+        $Params = $this->getParams(['media', 'find'], $Payload, $timestamp);
+
+        try {
+            $Result = $this->client->get(
+                $this->getUrl('media', ['mediaContainerId', 'mediaId'], $Payload),
+                $this->addOptions($Params, 'query')
+            );
+        } catch(ClientException $e) {
+            die('<pre>' . __METHOD__ . ":\n" . print_r($e, true) . "\n#################################\n\n" . '</pre>');
+        }
+
+        return $this->getResultAsArray($Result);
+    }
+
+    /**
+     * 
+     * @param array $Payload 
+     * @param null|int $timestamp 
      * @return array 
      * @throws MissingParameterException 
      * @throws DatatypeException 
      * @throws GuzzleException 
      * @throws RuntimeException 
      */
-    private function getMediacontainerSearch(array $Payload = [], $timestamp = null)
+    private function getSearch(array $Payload = [], ?int $timestamp = null) : array
     {
+        $Params = $this->getParams('search', $Payload, $timestamp);
+        
+        $Result = $this->client->post(
+            $this->getUrl('search'),
+            $this->addOptions($Params)
+        );
+        
+        return $this->getResultAsArray($Result);
+    }
+
+    /**
+     * 
+     * @param mixed $type 
+     * @param mixed $Payload 
+     * @param null|int $timestamp 
+     * @return array 
+     */
+    private function getParams($type, $Payload = null, ?int $timestamp = null) : array
+    {
+        if(is_string($type)) {
+            $type = [$type, $type];
+        }
+
         $Params = [
             'accessSecret' => getenv('AC_SECRET_KEY'),
-            'controller' => 'search',
-            'action' => 'search',
+            'controller' => $type[0],
+            'action' => $type[1],
             'ts' => gmdate('U')
         ];
 
@@ -95,24 +179,59 @@ class Request
             $Params['payload'] = $Payload;
         }
 
-        $Sign = (new Signature())->sign($Params);
-        try {
-            $Result = $this->client->post(
-                getenv('AC_API_URL') . '/' . $this->apiVersion . '/search/',
-                [
-                    'headers' => [
-                        'x-admiralcloud-rts' => $Sign['ts'],
-                        'x-admiralcloud-hash' => $Sign['hash'],
-                    ],
-                    'form_params' => $Params['payload']
-                ]
-            );
+        return $Params;
+    }
 
-            $Result = json_decode($Result->getBody()->getContents(), true);
-        } catch(ClientException $e) {
-            echo $e->getMessage();
+    private function getUrl(string $endpoint, $UrlParams = [], $Payload = null)
+    {
+        $Segments = [
+            getenv('AC_API_URL'),
+            $this->apiVersion,
+            $endpoint
+        ];
+
+        $URL = array_intersect_key($Payload, array_flip($UrlParams));
+        if(!empty($URL)) {
+            $Segments[] = implode('/', $URL);
         }
+
+        return implode('/', $Segments);
+    }
+
+    /**
+     * 
+     * @param array $Params 
+     * @return array 
+     * @throws MissingParameterException 
+     * @throws DatatypeException 
+     */
+    private function addOptions(array $Params, $dataType = 'form_params') : array
+    {
+        $Sign = (new Signature())->sign($Params);
         
-        return $Result;
+        $Options = [
+            'headers' => [
+                'x-admiralcloud-rts' => $Sign['ts'],
+                'x-admiralcloud-hash' => $Sign['hash'],
+            ]
+        ];
+
+        if(!empty($Params['payload'])) {
+            $Options[$dataType] = $Params['payload'];
+        }
+
+        return $Options;
+    }
+
+    /**
+     * 
+     * @param Response $Result 
+     * @return array 
+     * @throws InvalidArgumentException 
+     * @throws RuntimeException 
+     */
+    private function getResultAsArray(\GuzzleHttp\Psr7\Response $Result) : array
+    {
+        return json_decode($Result->getBody()->getContents(), true);
     }
 }
