@@ -111,6 +111,33 @@ class Request
      * @throws DatatypeException 
      * @throws GuzzleException 
      */
+    private function getMediacontainerBatch(array $Payload = [], ?int $timestamp = null) : array
+    {
+        $Params = $this->getParams(['mediacontainer', 'findBatch'], $Payload, $timestamp);
+        
+        try {
+            $Result = $this->client->post(
+                $this->getUrl('mediacontainer/findBatch'),
+                // Use 'query' here, for i dont know why.
+                // Maybe because filters must be send as GET
+                $this->addOptions($Params, 'query')
+            );
+        } catch(ClientException $e) {
+            die('<pre>' . __METHOD__ . ":\n" . print_r($e, true) . "\n#################################\n\n" . '</pre>');
+        }
+
+        return $this->getResultAsArray($Result);
+    }
+
+    /**
+     * 
+     * @param array $Payload 
+     * @param null|int $timestamp 
+     * @return array 
+     * @throws MissingParameterException 
+     * @throws DatatypeException 
+     * @throws GuzzleException 
+     */
     private function getMedia(array $Payload = [], ?int $timestamp = null) : array
     {
         $Params = $this->getParams(['media', 'find'], $Payload, $timestamp);
@@ -141,10 +168,14 @@ class Request
     {
         $Params = $this->getParams('search', $Payload, $timestamp);
         
-        $Result = $this->client->post(
-            $this->getUrl('search'),
-            $this->addOptions($Params)
-        );
+        try {
+            $Result = $this->client->post(
+                $this->getUrl('search'),
+                $this->addOptions($Params)
+            );
+        } catch(ClientException $e) {
+            die('<pre>' . __METHOD__ . ":\n" . print_r($e, true) . "\n#################################\n\n" . '</pre>');
+        }
         
         return $this->getResultAsArray($Result);
     }
