@@ -32,13 +32,26 @@ use Sioweb\AdmiralcloudClient\Api\Request;
 
 include '../vendor/autoload.php';
 
-
 $Request = new Request();
 
-die('<pre>' . print_r($Request->mediacontainerSearch([
-    'searchTerm' => 'Exaple value in your own metadata field',
-    'field' => 'meta_yourOwnMetadataField'
-]), true) . '</pre>');
+// Get Media by mediaContainerId & mediaId
+die(json_encode($Request->media([
+    'mediaContainerId' => 1046949,
+    'mediaId' => 3173423
+])));
+
+
+// Get Mediacontainer by mediaContainerId (not id!)
+die(json_encode($Request->mediacontainer([
+    'mediaContainerId' => 1046949
+])));
+
+
+// how to search by meta fields
+die(json_encode($Request->search([
+    'searchTerm' => '99999',
+    'field' => 'meta_seippArticleNumber'
+])));
 ```
 
 #### Unable to read the "/.../.env" environment file
